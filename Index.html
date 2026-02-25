@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Гайд по крафту</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&family=Oswald:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --panel: #141720;
+    --panel2: #1a1f2e;
+    --accent: #e8b84b;
+    --accent2: #4be8b8;
+    --accent3: #e84b6a;
+    --text: #c8cfe0;
+    --text-dim: #6b7490;
+    --border: #252b40;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Rajdhani', sans-serif; font-size: 16px; line-height: 1.5; }
+  header { background: var(--panel); border-bottom: 2px solid var(--accent); padding: 32px 48px; position: relative; overflow: hidden; }
+  header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(232,184,75,0.03) 60px, rgba(232,184,75,0.03) 61px); }
+  .header-inner { position: relative; z-index: 1; }
+  header h1 { font-family: 'Oswald', sans-serif; font-size: 42px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); text-shadow: 0 0 30px rgba(232,184,75,0.4); }
+  header p { color: var(--text-dim); font-family: 'Share Tech Mono', monospace; font-size: 13px; margin-top: 6px; letter-spacing: 2px; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 2px; background: var(--panel); padding: 16px 48px 0; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+  .tab { padding: 10px 20px; font-family: 'Oswald', sans-serif; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  main { padding: 40px 48px; max-width: 1400px; margin: 0 auto; }
+  .section { display: none; }
+  .section.active { display: block; }
+  .section-title { font-family: 'Oswald', sans-serif; font-size: 28px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+  .section-title::before { content: ''; display: inline-block; width: 4px; height: 28px; background: var(--accent); }
+  .recipes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; }
+  .recipe-card { background: var(--panel); border: 1px solid var(--border); border-top: 3px solid var(--accent); padding: 20px; transition: box-shadow 0.2s; }
+  .recipe-card:hover { box-shadow: 0 4px 30px rgba(232,184,75,0.1); }
+  .recipe-card.green-accent { border-top-color: var(--accent2); }
+  .recipe-card.green-accent:hover { box-shadow: 0 4px 30px rgba(75,232,184,0.1); }
+  .recipe-card.red-accent { border-top-color: var(--accent3); }
+  .recipe-name { font-family: 'Oswald', sans-serif; font-size: 18px; font-weight: 600; letter-spacing: 1px; color: #fff; margin-bottom: 16px; }
+  .recipe-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .badge { padding: 3px 10px; font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 1px; border: 1px solid; }
+  .badge-time  { color: #7090e8; border-color: rgba(112,144,232,0.4); background: rgba(112,144,232,0.08); }
+  .badge-elec  { color: #e8e070; border-color: rgba(232,224,112,0.4); background: rgba(232,224,112,0.08); }
+  .badge-plan  { color: #e870c8; border-color: rgba(232,112,200,0.4); background: rgba(232,112,200,0.08); }
+  .tools-row { margin-bottom: 14px; }
+  .label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; font-family: 'Share Tech Mono', monospace; }
+  .tools-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tool-chip { padding: 4px 12px; background: rgba(232,184,75,0.1); border: 1px solid rgba(232,184,75,0.3); color: var(--accent); font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 600; }
+  .ingredients-list { display: flex; flex-direction: column; gap: 6px; }
+  .ingredient { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--panel2); border-left: 2px solid var(--border); }
+  .ingredient.destroy { border-left-color: var(--accent3); }
+  .ingredient.keep    { border-left-color: var(--accent2); }
+  .ing-name { font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 600; color: var(--text); }
+  .ing-amount { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim); display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; margin-left: 10px; }
+  .ing-destroy { color: var(--accent3); font-size: 10px; }
+  .ing-keep    { color: var(--accent2); font-size: 10px; }
+  .ing-dmg     { color: #e87040; font-size: 10px; }
+  .legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 28px; padding: 14px 18px; background: var(--panel); border: 1px solid var(--border); font-size: 12px; font-family: 'Share Tech Mono', monospace; }
+  .legend-item { display: flex; align-items: center; gap: 8px; color: var(--text-dim); }
+  .legend-dot { width: 10px; height: 10px; border-left: 3px solid; flex-shrink: 0; }
+  .chain-container { background: var(--panel); border: 1px solid var(--border); padding: 24px; margin-bottom: 24px; }
+  .chain-title { font-family: 'Oswald', sans-serif; font-size: 16px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent2); margin-bottom: 20px; }
+  .chain-steps { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .chain-step { padding: 10px 16px; border: 1px solid var(--border); background: var(--panel2); text-align: center; }
+  .chain-step .step-num { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 1px; display: block; margin-bottom: 2px; }
+  .chain-step .step-name { font-family: 'Oswald', sans-serif; font-size: 14px; color: #fff; }
+  .chain-arrow { color: var(--accent2); font-size: 20px; flex-shrink: 0; }
+  .note { padding: 14px 18px; background: rgba(232,184,75,0.05); border: 1px solid rgba(232,184,75,0.2); border-left: 3px solid var(--accent); color: var(--text-dim); font-size: 14px; margin-bottom: 24px; }
+  .note strong { color: var(--accent); }
+  @media (max-width: 768px) { header, main, .tabs { padding-left: 20px; padding-right: 20px; } .recipes-grid { grid-template-columns: 1fr; } header h1 { font-size: 28px; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <h1>⚙ Гайд по крафту</h1>
+    <p>// ПОЛНАЯ БАЗА РЕЦЕПТОВ · ВСЕ КАТЕГОРИИ · ТРЕБОВАНИЯ И ИНСТРУМЕНТЫ</p>
+  </div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('weapons',this)">🔫 Оружие</div>
+  <div class="tab" onclick="showTab('nvg',this)">🌙 ПНВ</div>
+  <div class="tab" onclick="showTab('electronics',this)">🔌 Электроника</div>
+  <div class="tab" onclick="showTab('barrels',this)">🛢 Ёмкости</div>
+  <div class="tab" onclick="showTab('backpacks',this)">🎒 Рюкзаки</div>
+
+  <div class="tab" onclick="showTab('fuel',this)">⛽ Бензин</div>
+</div>
+
+<main>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="border-color:var(--accent3)"></div> Уничтожается при крафте</div>
+  <div class="legend-item"><div class="legend-dot" style="border-color:var(--accent2)"></div> Сохраняется</div>
+  <div class="legend-item"><div class="legend-dot" style="border-color:#e87040"></div> Теряет прочность</div>
+</div>
+
+<!-- WEAPONS -->
+<div class="section active" id="tab-weapons">
+  <div class="section-title">Оружие — VZP M107</div>
+  <div class="note"><strong>Цепочка крафта:</strong> M107 крафтится поэтапно — Gamma → Beta → Alpha. Инструменты на всех этапах: <strong>Тиски + Дрель</strong>. Для Gamma существует <strong>два разных рецепта</strong> — полный (из 5 скинов) и упрощённый (из 1 обычного Barrett).</div>
+  <div class="chain-container">
+    <div class="chain-title">► Путь к VZP M107 Alpha</div>
+    <div class="chain-steps">
+      <div class="chain-step"><span class="step-num">5 СКИНОВ</span><span class="step-name">Barrett M82A1<br><small style="font-size:11px;color:var(--text-dim)">(обычный, чёрный, пустынный, снежный, Mikey)</small></span></div>
+      <div class="chain-arrow">→</div>
+      <div class="chain-step"><span class="step-num">ЭТАП 1</span><span class="step-name">M107 Gamma</span></div>
+      <div class="chain-arrow">→</div>
+      <div class="chain-step"><span class="step-num">ЭТАП 2</span><span class="step-name">M107 Beta</span></div>
+      <div class="chain-arrow">→</div>
+      <div class="chain-step"><span class="step-num">ЭТАП 3 ★</span><span class="step-name">M107 Alpha</span></div>
+    </div>
+  </div>
+  <div class="recipes-grid">
+    <div class="recipe-card">
+      <div class="recipe-name">VZP M107 Gamma</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 10 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Тиски</span><span class="tool-chip">Дрель</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Barrett M82A1 (обычный)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Barrett M82A1 (чёрный)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Barrett M82A1 (пустынный)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Barrett M82A1 (снежный)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Barrett M82A1 (Mikey)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card">
+      <div class="recipe-name">VZP M107 Gamma <small style="font-size:13px;color:var(--text-dim)">(упрощённый)</small></div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 10 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Тиски</span><span class="tool-chip">Дрель</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Barrett M82A1 (обычный)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card">
+      <div class="recipe-name">VZP M107 Beta</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 10 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Тиски</span><span class="tool-chip">Дрель</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">VZP M107 Gamma</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card red-accent">
+      <div class="recipe-name">VZP M107 Alpha ★</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 10 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Тиски</span><span class="tool-chip">Дрель</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">VZP M107 Beta</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NVG -->
+<div class="section" id="tab-nvg">
+  <div class="section-title">Приборы ночного видения</div>
+  <div class="note"><strong>Важно:</strong> Продвинутые ПНВ и все фильтры требуют <strong>Чертёж ПНВ</strong> (расходует 14% прочности за крафт).</div>
+  <div class="recipes-grid">
+    <div class="recipe-card">
+      <div class="recipe-name">ПНВ (базовый)</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 30 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="label" style="margin-bottom:10px">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Набор электронного ремонта</span><span class="ing-amount">100%<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Бинокль</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Лампа H7 (коробка)</span><span class="ing-amount">×2<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Хим. лампа (зелёная)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Линзы</span><span class="ing-amount">×10<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card red-accent">
+      <div class="recipe-name">ПНВ FC (чёрный) ★</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 30 сек</span><span class="badge badge-elec">⚡ Электричество</span><span class="badge badge-plan">📜 Чертёж ПНВ −14%</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Паяльник</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Набор электронного ремонта</span><span class="ing-amount">100%<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">ПНВ (базовый)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Припой</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Камера</span><span class="ing-amount">×4<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Линзы</span><span class="ing-amount">×40<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient keep"><span class="ing-name">Мультиметр</span><span class="ing-amount">×1<span class="ing-dmg">−20% прочности</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card green-accent">
+      <div class="recipe-name">Фильтр ПНВ — Бежевый</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 30 сек</span><span class="badge badge-elec">⚡ Электричество</span><span class="badge badge-plan">📜 Чертёж ПНВ −14%</span></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Набор электронного ремонта</span><span class="ing-amount">100%<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Лампа H7 (коробка)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Хим. лампа (жёлтая)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Линзы</span><span class="ing-amount">×5<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card green-accent">
+      <div class="recipe-name">Фильтр ПНВ — Жёлтый</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 30 сек</span><span class="badge badge-elec">⚡ Электричество</span><span class="badge badge-plan">📜 Чертёж ПНВ −14%</span></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Набор электронного ремонта</span><span class="ing-amount">100%<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Лампа H7 (коробка)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Хим. лампа (жёлтая)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Линзы</span><span class="ing-amount">×5<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card green-accent">
+      <div class="recipe-name">Фильтр ПНВ — Светло-зелёный</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 30 сек</span><span class="badge badge-elec">⚡ Электричество</span><span class="badge badge-plan">📜 Чертёж ПНВ −14%</span></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Набор электронного ремонта</span><span class="ing-amount">100%<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Лампа H7 (коробка)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Хим. лампа (зелёная)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Хим. лампа (белая)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Линзы</span><span class="ing-amount">×5<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card green-accent">
+      <div class="recipe-name">Фильтр ПНВ — Голубой</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 30 сек</span><span class="badge badge-elec">⚡ Электричество</span><span class="badge badge-plan">📜 Чертёж ПНВ −14%</span></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Набор электронного ремонта</span><span class="ing-amount">100%<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Лампа H7 (коробка)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Хим. лампа (синяя)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Хим. лампа (белая)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Линзы</span><span class="ing-amount">×5<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card green-accent">
+      <div class="recipe-name">Фильтр ПНВ — Фиолетовый</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 30 сек</span><span class="badge badge-elec">⚡ Электричество</span><span class="badge badge-plan">📜 Чертёж ПНВ −14%</span></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Набор электронного ремонта</span><span class="ing-amount">100%<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Лампа H7 (коробка)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Хим. лампа (синяя)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Хим. лампа (красная)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Линзы</span><span class="ing-amount">×5<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card green-accent">
+      <div class="recipe-name">Фильтр ПНВ — Белый</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 30 сек</span><span class="badge badge-elec">⚡ Электричество</span><span class="badge badge-plan">📜 Чертёж ПНВ −14%</span></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Набор электронного ремонта</span><span class="ing-amount">100%<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Лампа H7 (коробка)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Хим. лампа (белая)</span><span class="ing-amount">×2<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Линзы</span><span class="ing-amount">×5<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ELECTRONICS -->
+<div class="section" id="tab-electronics">
+  <div class="section-title">Электроника</div>
+  <div class="note"><strong>Базовые компоненты</strong> получаются разборкой электроники (телефоны, видеокарты, Wi-Fi камеры). <strong>Паяльник</strong> нужен на всех этапах.</div>
+  <div class="chain-container">
+    <div class="chain-title">► Цепочка крафта: Иммобилайзер</div>
+    <div class="chain-steps">
+      <div class="chain-step"><span class="step-num">РАЗБИРАЕМ</span><span class="step-name">Видеокарта / ОЗУ<br>Разбитый iPhone / Wi-Fi камера</span></div>
+      <div class="chain-arrow">→</div>
+      <div class="chain-step"><span class="step-num">ПОЛУЧАЕМ</span><span class="step-name">Плата / Микрочип<br>LCD / Камера</span></div>
+      <div class="chain-arrow">→</div>
+      <div class="chain-step"><span class="step-num">КРАФТИМ</span><span class="step-name">Чип Virtex</span></div>
+      <div class="chain-arrow">→</div>
+      <div class="chain-step"><span class="step-num">ФИНАЛ ★</span><span class="step-name">Иммобилайзер</span></div>
+    </div>
+  </div>
+  <div class="recipes-grid">
+    <div class="recipe-card">
+      <div class="recipe-name">Микрочип</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 10 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Паяльник</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Оперативная память (ОЗУ)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient keep"><span class="ing-name">Отвёртка</span><span class="ing-amount">×1<span class="ing-dmg">−20% прочности</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card">
+      <div class="recipe-name">LCD-экран</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 10 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Паяльник</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Разбитый iPhone</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient keep"><span class="ing-name">Отвёртка</span><span class="ing-amount">×1<span class="ing-dmg">−20% прочности</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card">
+      <div class="recipe-name">Плата</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 10 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Паяльник</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Видеокарта</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient keep"><span class="ing-name">Отвёртка</span><span class="ing-amount">×1<span class="ing-dmg">−20% прочности</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card">
+      <div class="recipe-name">Камера</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 10 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Паяльник</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Wi-Fi камера</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient keep"><span class="ing-name">Отвёртка</span><span class="ing-amount">×1<span class="ing-dmg">−20% прочности</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card">
+      <div class="recipe-name">Чип Virtex</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 10 сек</span><span class="badge badge-elec">⚡ Электричество</span><span class="badge badge-plan">📜 Чертёж Иммобилайзера</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Паяльник</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Плата</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Микрочип</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Припой</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card red-accent">
+      <div class="recipe-name">Иммобилайзер ★</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 30 сек</span><span class="badge badge-elec">⚡ Электричество</span><span class="badge badge-plan">📜 Чертёж Иммобилайзера</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Паяльник</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Набор электронного ремонта</span><span class="ing-amount">100%<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Контроллер иммобилайзера (пустой)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Чип Virtex</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient keep"><span class="ing-name">Мультиметр</span><span class="ing-amount">×1<span class="ing-dmg">−20% прочности</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card">
+      <div class="recipe-name">Мобильный телефон</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 60 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Паяльник</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Набор электронного ремонта</span><span class="ing-amount">100%<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Разбитый iPhone X</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">LCD-экран</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient keep"><span class="ing-name">Клей</span><span class="ing-amount">×1<span class="ing-keep">сохраняется</span></span></div>
+        <div class="ingredient keep"><span class="ing-name">Отвёртка</span><span class="ing-amount">×1<span class="ing-dmg">−20% прочности</span></span></div>
+        <div class="ingredient keep"><span class="ing-name">Мультиметр</span><span class="ing-amount">×1<span class="ing-dmg">−20% прочности</span></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BARRELS -->
+<div class="section" id="tab-barrels">
+  <div class="section-title">Ёмкости и бочки</div>
+  <div class="note">Все ёмкости крафтятся с помощью <strong>Металлореза</strong>. Время крафта — 50 сек, нужно электричество.</div>
+  <div class="recipes-grid">
+    <div class="recipe-card">
+      <div class="recipe-name">Расширитель ствола</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 50 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Металлорез</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Металлопластина</span><span class="ing-amount">×10<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Краска чёрная</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Краска белая</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Молоток</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card">
+      <div class="recipe-name">Канистра бензина</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 50 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Металлорез</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Металлопластина</span><span class="ing-amount">×5<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Краска чёрная</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Краска зелёная</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Молоток</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card">
+      <div class="recipe-name">Бочка 300л — Чёрная</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 50 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Металлорез</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Металлопластина</span><span class="ing-amount">×20<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Краска чёрная</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Молоток</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card">
+      <div class="recipe-name">Бочка 300л — Синяя</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 50 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Металлорез</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Металлопластина</span><span class="ing-amount">×20<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Краска синяя</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Молоток</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card">
+      <div class="recipe-name">Бочка 300л — Красная</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 50 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Металлорез</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Металлопластина</span><span class="ing-amount">×20<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Краска красная</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Молоток</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card">
+      <div class="recipe-name">Бочка 500л — Flame</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 50 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Металлорез</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Металлопластина</span><span class="ing-amount">×50<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Краска чёрная</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Краска красная</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Краска жёлтая</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Молоток</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card">
+      <div class="recipe-name">Бочка 500л — Камуфляж</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 50 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Металлорез</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Металлопластина</span><span class="ing-amount">×50<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Краска чёрная</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Краска зелёная</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Краска жёлтая</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Молоток</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+    <div class="recipe-card">
+      <div class="recipe-name">Бочка 500л — Пальмы</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 50 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Металлорез</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Металлопластина</span><span class="ing-amount">×50<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Краска чёрная</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Краска зелёная</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Краска красная</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+        <div class="ingredient destroy"><span class="ing-name">Молоток</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BACKPACKS -->
+<div class="section" id="tab-backpacks">
+  <div class="section-title">Рюкзаки (Тиры)</div>
+  <div class="note">Рюкзаки улучшаются цепочкой — каждый тир требует предыдущий. Инструмент — <strong>Швейная машина</strong>, 30 сек, нужно электричество.</div>
+  <div class="chain-container">
+    <div class="chain-title">► Цепочка улучшения рюкзака</div>
+    <div class="chain-steps">
+      <div class="chain-step"><span class="step-num">СТАРТ</span><span class="step-name">Тактический рюкзак (чёрный)</span></div>
+      <div class="chain-arrow">→</div>
+      <div class="chain-step"><span class="step-num">ТИР 1</span><span class="step-name">Рюкзак Тир 1</span></div>
+      <div class="chain-arrow">→</div>
+      <div class="chain-step"><span class="step-num">ТИР 2</span><span class="step-name">Рюкзак Тир 2</span></div>
+      <div class="chain-arrow">→</div>
+      <div class="chain-step"><span class="step-num">ТИР 3</span><span class="step-name">Рюкзак Тир 3</span></div>
+      <div class="chain-arrow">→</div>
+      <div class="chain-step"><span class="step-num">ТИР 4</span><span class="step-name">Рюкзак Тир 4</span></div>
+      <div class="chain-arrow">→</div>
+      <div class="chain-step"><span class="step-num">ТИР 5 ★</span><span class="step-name">Рюкзак Тир 5</span></div>
+    </div>
+  </div>
+  <div class="recipes-grid">
+    <div class="recipe-card">
+      <div class="recipe-name">Рюкзак Тир 1</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 30 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Швейная машина</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list"><div class="ingredient destroy"><span class="ing-name">Тактический рюкзак (чёрный)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div></div>
+    </div>
+    <div class="recipe-card">
+      <div class="recipe-name">Рюкзак Тир 2</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 30 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Швейная машина</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list"><div class="ingredient destroy"><span class="ing-name">Рюкзак Тир 1</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div></div>
+    </div>
+    <div class="recipe-card">
+      <div class="recipe-name">Рюкзак Тир 3</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 30 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Швейная машина</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list"><div class="ingredient destroy"><span class="ing-name">Рюкзак Тир 2</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div></div>
+    </div>
+    <div class="recipe-card">
+      <div class="recipe-name">Рюкзак Тир 4</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 30 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Швейная машина</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list"><div class="ingredient destroy"><span class="ing-name">Рюкзак Тир 3</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div></div>
+    </div>
+    <div class="recipe-card red-accent">
+      <div class="recipe-name">Рюкзак Тир 5 ★</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 30 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row"><div class="label">Инструменты</div><div class="tools-list"><span class="tool-chip">Швейная машина</span></div></div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list"><div class="ingredient destroy"><span class="ing-name">Рюкзак Тир 4</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div></div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- FUEL -->
+<div class="section" id="tab-fuel">
+  <div class="section-title">Бензин</div>
+  <div class="recipes-grid">
+    <div class="recipe-card">
+      <div class="recipe-name">Бензин</div>
+      <div class="recipe-meta"><span class="badge badge-time">⏱ 10 сек</span><span class="badge badge-elec">⚡ Электричество</span></div>
+      <div class="tools-row">
+        <div class="label">Инструменты</div>
+        <div class="tools-list"><span class="tool-chip">Газовая горелка</span></div>
+      </div>
+      <div class="label" style="margin-bottom:8px">Горелка изнашивается на 5–10% за крафт · расход 20–25%</div>
+      <div class="label">Ингредиенты</div>
+      <div class="ingredients-list">
+        <div class="ingredient destroy"><span class="ing-name">Бутылка с нефтью (500 ед.)</span><span class="ing-amount">×1<span class="ing-destroy">уничтожается</span></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+function showTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
